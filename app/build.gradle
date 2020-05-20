@@ -1,0 +1,74 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion BuildVersions.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.qingmei2.sample"
+        minSdkVersion BuildVersions.minSdkVersion
+        targetSdkVersion BuildVersions.targetSdkVersion
+        versionCode BuildVersions.versionCode
+        versionName BuildVersions.versionName
+
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+//        Properties properties = new Properties()
+//        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+//        buildConfigField "String", "CLIENT_ID", properties.getProperty("CLIENT_ID")
+//        buildConfigField "String", "CLIENT_SECRET", properties.getProperty("CLIENT_SECRET")
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':architecture-core')
+
+    implementation Dependencies.appcompat
+    implementation Dependencies.recyclerview
+    implementation Dependencies.materialDesign
+    implementation Dependencies.constraintlayout
+    implementation Dependencies.flexbox
+    implementation Dependencies.swiperefreshlayout
+
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.cpacm:floatingmusicmenu:1.0.0'
+
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+
+    debugImplementation Dependencies.leakCanaryDebug
+    debugImplementation Dependencies.leakCanaryDebugSupport
+    releaseImplementation Dependencies.leakCanaryRelease
+
+    kapt Dependencies.glideCompiler
+    kapt Dependencies.roomCompiler
+    kapt Dependencies.lifecycleCompiler
+
+    testImplementation Dependencies.junit4
+
+    androidTestImplementation Dependencies.espresso
+}
+
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas".toString())
+    }
+}
