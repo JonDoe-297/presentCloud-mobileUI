@@ -7,7 +7,7 @@ android {
     compileSdkVersion BuildVersions.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.qingmei2.sample"
+        applicationId "com.octopus.sample"
         minSdkVersion BuildVersions.minSdkVersion
         targetSdkVersion BuildVersions.targetSdkVersion
         versionCode BuildVersions.versionCode
