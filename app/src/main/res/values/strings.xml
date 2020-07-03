@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">MyGithub</string>
 
-    <string name="main_nav_home">Home</string>
-    <string name="main_nav_repos">Repos</string>
+    <string name="main_nav_home">Class</string>
     <string name="main_nav_profile">Me</string>
 
     <string name="login_tips">用户登录</string>

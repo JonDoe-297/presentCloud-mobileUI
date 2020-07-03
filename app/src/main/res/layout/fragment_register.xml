@@ -137,7 +137,7 @@
                         android:id="@+id/tvNo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="请输入学生证号"
+                        android:hint="请输入证件号码"
                         android:maxLines="1"
                         android:singleLine="true" />
 

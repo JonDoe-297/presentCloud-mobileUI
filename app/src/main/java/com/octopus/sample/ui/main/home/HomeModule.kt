@@ -17,7 +17,7 @@ val homeKodeinModule = Kodein.Module(HOME_MODULE_TAG) {
     }
 
     bind<HomeRemoteDataSource>() with scoped<Fragment>(AndroidLifecycleScope).singleton {
-        HomeRemoteDataSource(serviceManager = instance())
+        HomeRemoteDataSource(serviceManager = instance(), userInfoRepository = instance())
     }
 
     bind<HomeLocalDataSource>() with scoped<Fragment>(AndroidLifecycleScope).singleton {

@@ -20,7 +20,7 @@ class RegisterFragment : BaseFragment() {
 
     override val layoutId: Int = R.layout.fragment_register
 
-    private val mViewModel: RegisterViewModel by instance()
+    private val mViewModel by instance<RegisterViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -29,7 +29,7 @@ class RegisterFragment : BaseFragment() {
 
     private fun binds() {
         mBtnSignIn.setOnClickListener {
-            mViewModel.login(tvUsername.text.toString(), tvPassword.text.toString(),
+            mViewModel.reg(tvUsername.text.toString(), tvPassword.text.toString(),
                     tvNick.text.toString(), tvNo.text.toString(),
                     if (rg.checkedRadioButtonId == R.id.rbStudent) "student" else "teacher")
         }
@@ -38,16 +38,14 @@ class RegisterFragment : BaseFragment() {
     }
 
     private fun onNewState(state: RegisterViewState) {
-        if (state.throwable != null) {
-            when (state.throwable) {
-                is Errors.EmptyInputError -> "信息不全"
-                else -> "network failure"
-            }.also { str ->
-                toast { str }
-            }
+        if (!state.msg.isNullOrEmpty()) {
+            toast { state.msg }
         }
 
         mProgressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
 
+        if (state.success) {
+            activity?.finish()
+        }
     }
 }

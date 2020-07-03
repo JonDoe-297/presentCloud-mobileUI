@@ -4,17 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import com.qingmei2.architecture.core.base.view.fragment.BaseFragment
-import com.qingmei2.architecture.core.ext.observe
 import com.octopus.sample.R
-import com.octopus.sample.http.Errors
 import com.octopus.sample.ui.MainActivity
 import com.octopus.sample.ui.register.RegisterActivity
 import com.octopus.sample.utils.toast
+import com.qingmei2.architecture.core.base.view.fragment.BaseFragment
+import com.qingmei2.architecture.core.ext.observe
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
-import retrofit2.HttpException
 
 class LoginFragment : BaseFragment() {
 
@@ -25,7 +23,7 @@ class LoginFragment : BaseFragment() {
 
     override val layoutId: Int = R.layout.fragment_login
 
-    private val mViewModel: LoginViewModel by instance()
+    private val mViewModel by instance<LoginViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,18 +42,8 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun onNewState(state: LoginViewState) {
-        if (state.throwable != null) {
-            when (state.throwable) {
-                is Errors.EmptyInputError -> "username or password can't be null."
-                is HttpException ->
-                    when (state.throwable.code()) {
-                        401 -> "username or password failure."
-                        else -> "network failure"
-                    }
-                else -> "network failure"
-            }.also { str ->
-                toast { str }
-            }
+        if (!state.msg.isNullOrEmpty()) {
+            toast { state.msg }
         }
 
         mProgressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE

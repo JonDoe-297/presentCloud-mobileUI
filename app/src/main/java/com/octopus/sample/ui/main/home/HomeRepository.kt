@@ -5,16 +5,16 @@ import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
 import androidx.paging.DataSource
 import androidx.room.withTransaction
+import com.octopus.sample.base.Results
+import com.octopus.sample.db.UserDatabase
+import com.octopus.sample.entity.CommonResp
+import com.octopus.sample.entity.ReceivedEvent
+import com.octopus.sample.http.service.ServiceManager
+import com.octopus.sample.repository.UserInfoRepository
+import com.octopus.sample.utils.processApiResponse
 import com.qingmei2.architecture.core.base.repository.BaseRepositoryBoth
 import com.qingmei2.architecture.core.base.repository.ILocalDataSource
 import com.qingmei2.architecture.core.base.repository.IRemoteDataSource
-import com.octopus.sample.PAGING_REMOTE_PAGE_SIZE
-import com.octopus.sample.base.Results
-import com.octopus.sample.db.UserDatabase
-import com.octopus.sample.entity.ReceivedEvent
-import com.octopus.sample.http.service.ServiceManager
-import com.octopus.sample.manager.UserManager
-import com.octopus.sample.utils.processApiResponse
 
 @SuppressLint("CheckResult")
 class HomeRepository(
@@ -23,12 +23,8 @@ class HomeRepository(
 ) : BaseRepositoryBoth<HomeRemoteDataSource, HomeLocalDataSource>(remoteDataSource, localDataSource) {
 
     @MainThread
-    suspend fun fetchEventByPage(
-            pageIndex: Int,
-            remoteRequestPerPage: Int = PAGING_REMOTE_PAGE_SIZE
-    ): Results<List<ReceivedEvent>> {
-        val username: String = UserManager.INSTANCE.login
-        return remoteDataSource.fetchEventsByPage(username, pageIndex, remoteRequestPerPage)
+    suspend fun fetchEventByPage(): Results<CommonResp<List<ReceivedEvent>>> {
+        return remoteDataSource.fetchEventsByPage()
     }
 
     @AnyThread
@@ -47,23 +43,13 @@ class HomeRepository(
     }
 }
 
-class HomeRemoteDataSource(private val serviceManager: ServiceManager) : IRemoteDataSource {
+class HomeRemoteDataSource(
+        private val serviceManager: ServiceManager,
+        private val userInfoRepository: UserInfoRepository
+) : IRemoteDataSource {
 
-    suspend fun fetchEventsByPage(
-            username: String,
-            pageIndex: Int,
-            perPage: Int
-    ): Results<List<ReceivedEvent>> {
-        return fetchEventsByPageInternal(username, pageIndex, perPage)
-    }
-
-    private suspend fun fetchEventsByPageInternal(
-            username: String,
-            pageIndex: Int,
-            perPage: Int
-    ): Results<List<ReceivedEvent>> {
-        val eventsResponse = serviceManager.userService
-                .queryReceivedEvents(username, pageIndex, perPage)
+    suspend fun fetchEventsByPage(): Results<CommonResp<List<ReceivedEvent>>> {
+        val eventsResponse = serviceManager.userService.getClassList(userInfoRepository.accessId)
         return processApiResponse(eventsResponse)
     }
 }

@@ -1,10 +1,9 @@
 package com.octopus.sample.ui.login
 
 import androidx.lifecycle.*
+import com.octopus.sample.base.Results
 import com.qingmei2.architecture.core.base.viewmodel.BaseViewModel
 import com.qingmei2.architecture.core.ext.postNext
-import com.octopus.sample.base.Results
-import com.octopus.sample.http.Errors
 import kotlinx.coroutines.launch
 
 @SuppressWarnings("checkResult")
@@ -22,7 +21,7 @@ class LoginViewModel(
             _stateLiveData.postNext { state ->
                 state.copy(
                         isLoading = false,
-                        throwable = null,
+                        msg = null,
                         autoLoginEvent = autoLoginEvent,
                         useAutoLoginEvent = true,
                         loginInfo = null
@@ -33,7 +32,7 @@ class LoginViewModel(
 
     fun onAutoLoginEventUsed() {
         _stateLiveData.postNext { state ->
-            state.copy(isLoading = false, throwable = null,
+            state.copy(isLoading = false, msg = null,
                     autoLoginEvent = null, useAutoLoginEvent = false, loginInfo = null)
         }
     }
@@ -41,19 +40,20 @@ class LoginViewModel(
     fun login(username: String?, password: String?) {
         when (username.isNullOrEmpty() || password.isNullOrEmpty()) {
             true -> _stateLiveData.postNext { state ->
-                state.copy(isLoading = false, throwable = Errors.EmptyInputError,
+                state.copy(isLoading = false, msg = "username or password can't be null",
                         loginInfo = null, autoLoginEvent = null)
             }
             false -> viewModelScope.launch {
                 _stateLiveData.postNext {
-                    it.copy(isLoading = true, throwable = null, loginInfo = null, autoLoginEvent = null)
+                    it.copy(isLoading = true, msg = null, loginInfo = null, autoLoginEvent = null)
                 }
                 when (val result = repo.login(username, password)) {
                     is Results.Failure -> _stateLiveData.postNext {
-                        it.copy(isLoading = false, throwable = result.error, loginInfo = null, autoLoginEvent = null)
+                        it.copy(isLoading = false, msg = result.error.toString(), loginInfo = null, autoLoginEvent = null)
                     }
                     is Results.Success -> _stateLiveData.postNext {
-                        it.copy(isLoading = false, throwable = null, loginInfo = result.data, autoLoginEvent = null)
+                        repo.saveUserId(result.data.data.userid)
+                        it.copy(isLoading = false, msg = result.data.msg, loginInfo = result.data.data, autoLoginEvent = null)
                     }
                 }
             }

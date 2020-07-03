@@ -21,7 +21,7 @@ class HomeFragment : BaseFragment() {
         import(homeKodeinModule)
     }
 
-    private val mViewModel: HomeViewModel by instance()
+    private val mViewModel: HomeViewModel by instance<HomeViewModel>()
 
     override val layoutId: Int = R.layout.fragment_home
 

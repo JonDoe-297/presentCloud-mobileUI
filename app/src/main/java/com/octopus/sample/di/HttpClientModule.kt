@@ -2,6 +2,7 @@ package com.octopus.sample.di
 
 import com.octopus.sample.BuildConfig
 import com.octopus.sample.http.interceptor.BasicAuthInterceptor
+import com.octopus.sample.repository.UserInfoRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
@@ -40,6 +41,9 @@ val httpClientModule = Kodein.Module(HTTP_CLIENT_MODULE_TAG) {
         HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
             override fun log(message: String) {
                 Platform.get().log(message, level = Platform.WARN)
+                if (message.startsWith("Authorization")) {
+                    instance<UserInfoRepository>().accessToken = message.replace("Authorization:", "").trim()
+                }
             }
         }).apply {
             level = when (BuildConfig.DEBUG) {

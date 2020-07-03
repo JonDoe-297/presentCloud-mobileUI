@@ -21,7 +21,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.qingmei2.architecture.core.image.GlideApp
 import com.octopus.sample.R
 import com.octopus.sample.entity.ReceivedEvent
-import com.octopus.sample.entity.Type
 import com.octopus.sample.utils.TimeConverter
 
 class HomePagedAdapter : PagedListAdapter<ReceivedEvent, HomePagedViewHolder>(diffCallback) {
@@ -48,7 +47,7 @@ class HomePagedAdapter : PagedListAdapter<ReceivedEvent, HomePagedViewHolder>(di
                 object : DiffUtil.ItemCallback<ReceivedEvent>() {
 
                     override fun areItemsTheSame(oldItem: ReceivedEvent, newItem: ReceivedEvent): Boolean {
-                        return oldItem.id == newItem.id
+                        return oldItem.classid == newItem.classid
                     }
 
                     override fun areContentsTheSame(oldItem: ReceivedEvent, newItem: ReceivedEvent): Boolean {
@@ -62,67 +61,10 @@ class HomePagedViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val tvEventContent: TextView = view.findViewById(R.id.tvEventContent)
     private val tvEventTime: TextView = view.findViewById(R.id.tvEventTime)
-    private val ivAvatar: ImageView = view.findViewById(R.id.ivAvatar)
-    private val ivEventType: ImageView = view.findViewById(R.id.ivEventType)
 
     fun binds(data: ReceivedEvent, position: Int, liveData: MutableLiveData<String>) {
-        GlideApp.with(ivAvatar.context)
-                .load(data.actor.avatarUrl)
-                .apply(RequestOptions().circleCrop())
-                .into(ivAvatar)
 
-        tvEventTime.text = TimeConverter.tramsTimeAgo(data.createdAt)
-        tvEventContent.text = getTitle(data, liveData)
+        tvEventContent.text = data.classname
 
-        ivEventType.setImageDrawable(
-                when (data.type) {
-                    Type.WatchEvent ->
-                        ContextCompat.getDrawable(ivEventType.context, R.mipmap.ic_star_yellow_light)
-                    Type.CreateEvent, Type.ForkEvent, Type.PushEvent ->
-                        ContextCompat.getDrawable(ivEventType.context, R.mipmap.ic_fork_green_light)
-                    else -> null
-                }
-        )
-    }
-
-    private fun getTitle(data: ReceivedEvent, liveData: MutableLiveData<String>): CharSequence {
-        val actor = data.actor.displayLogin
-        val action = when (data.type) {
-            Type.WatchEvent -> "starred"
-            Type.CreateEvent -> "created"
-            Type.ForkEvent -> "forked"
-            Type.PushEvent -> "pushed"
-            else -> data.type.name
-        }
-        val repo = data.repo.name
-
-        val actorSpan = object : ClickableSpan() {
-            override fun onClick(widget: View) {
-                liveData.postValue(data.actor.url)
-            }
-        }
-        val repoSpan = object : ClickableSpan() {
-            override fun onClick(widget: View) {
-                liveData.postValue(data.repo.url)
-            }
-        }
-        val styleSpan = StyleSpan(Typeface.BOLD)
-        val styleSpan2 = StyleSpan(Typeface.BOLD)
-
-        tvEventContent.movementMethod = LinkMovementMethod.getInstance()
-
-        return SpannableStringBuilder().apply {
-            append("$actor $action $repo")
-            setSpan(actorSpan, 0, actor.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(styleSpan, 0, actor.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(repoSpan,
-                    actor.length + action.length + 2,
-                    actor.length + action.length + repo.length + 2,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(styleSpan2,
-                    actor.length + action.length + 2,
-                    actor.length + action.length + repo.length + 2,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
     }
 }

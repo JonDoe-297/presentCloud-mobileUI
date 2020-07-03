@@ -9,6 +9,8 @@ class UserInfoRepository(prefs: SharedPreferences) {
 
     var accessToken: String by prefs.string("user_access_token", "")
 
+    var accessId: String by prefs.string("user_access_id", "")
+
     var username by prefs.string("username", "")
 
     var password by prefs.string("password", "")

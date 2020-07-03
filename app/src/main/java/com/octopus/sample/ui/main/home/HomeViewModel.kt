@@ -9,6 +9,7 @@ import com.qingmei2.architecture.core.ext.paging.PagingRequestHelper
 import com.qingmei2.architecture.core.ext.paging.toLiveDataPagedList
 import com.qingmei2.architecture.core.ext.postNext
 import com.octopus.sample.base.Results
+import com.octopus.sample.entity.CommonResp
 import com.octopus.sample.entity.ReceivedEvent
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
@@ -33,8 +34,8 @@ class HomeViewModel(
             // 这会给用户一种无限加载列表的效果
             when (result) {
                 is Results.Success -> when (pageIndex == 1) {
-                    true -> repository.clearAndInsertNewData(result.data)
-                    false -> repository.insertNewPageData(result.data)
+                    true -> repository.clearAndInsertNewData(result.data.data)
+                    false -> repository.insertNewPageData(result.data.data)
                 }
                 else -> Unit    // do nothing
             }
@@ -50,10 +51,10 @@ class HomeViewModel(
             _viewStateLiveData.postNext { last ->
                 last.copy(isLoading = true, throwable = null)
             }
-            when (val result = repository.fetchEventByPage(1)) {
+            when (val result = repository.fetchEventByPage()) {
                 // 2.1 成功后，对数据库进行清空，并插入第一页的数据，取消刷新
                 is Results.Success -> {
-                    repository.clearAndInsertNewData(result.data)
+                    repository.clearAndInsertNewData(result.data.data)
                     _viewStateLiveData.postNext { last ->
                         last.copy(isLoading = false, throwable = null)
                     }
@@ -75,7 +76,7 @@ class HomeViewModel(
     }
 
     inner class HomeBoundaryCallback(
-            @WorkerThread private val handleResponse: (Results<List<ReceivedEvent>>, Int) -> Unit
+            @WorkerThread private val handleResponse: (Results<CommonResp<List<ReceivedEvent>>>, Int) -> Unit
     ) : PagedList.BoundaryCallback<ReceivedEvent>() {
 
         private val mExecutor = Executors.newSingleThreadExecutor()
@@ -85,7 +86,7 @@ class HomeViewModel(
             mHelper.runIfNotRunning(PagingRequestHelper.RequestType.INITIAL, object : PagingRequestHelper.Request {
                 override fun run(callback: PagingRequestHelper.Request.Callback) {
                     viewModelScope.launch {
-                        val result = repository.fetchEventByPage(1)
+                        val result = repository.fetchEventByPage()
                         handleResponse(result, 1)
                         callback.recordSuccess()
                     }
@@ -94,18 +95,7 @@ class HomeViewModel(
         }
 
         override fun onItemAtEndLoaded(itemAtEnd: ReceivedEvent) {
-            mHelper.runIfNotRunning(PagingRequestHelper.RequestType.AFTER, object : PagingRequestHelper.Request {
-                override fun run(callback: PagingRequestHelper.Request.Callback) {
-                    val currentPageIndex = (itemAtEnd.indexInResponse / 30) + 1
-                    val nextPageIndex = currentPageIndex + 1
 
-                    viewModelScope.launch {
-                        val result = repository.fetchEventByPage(nextPageIndex)
-                        handleResponse(result, nextPageIndex)
-                        callback.recordSuccess()
-                    }
-                }
-            })
         }
     }
 }

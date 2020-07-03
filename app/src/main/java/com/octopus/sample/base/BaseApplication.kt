@@ -34,18 +34,10 @@ open class BaseApplication : Application(), KodeinAware {
 
         initLogger(BuildConfig.DEBUG)
         initStetho()
-        initLeakCanary()
     }
 
     private fun initStetho() {
         Stetho.initializeWithDefaults(this)
-    }
-
-    private fun initLeakCanary() {
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return
-        }
-        LeakCanary.install(this)
     }
 
     companion object {

@@ -1,5 +1,6 @@
 package com.octopus.sample.http.service
 
+import com.octopus.sample.entity.CommonResp
 import com.octopus.sample.entity.UserAccessToken
 import com.octopus.sample.entity.UserInfo
 import com.octopus.sample.http.service.bean.LoginRequestModel
@@ -16,8 +17,8 @@ interface LoginService {
     suspend fun authorizations(@Body authRequestModel: LoginRequestModel): Response<UserAccessToken>
 
     @POST("register")
-    suspend fun register(@Body loginServiceModel: LoginServiceModel): Response<UserInfo>
+    suspend fun register(@Body loginServiceModel: LoginServiceModel): Response<CommonResp<Any>>
 
     @POST("login")
-    suspend fun login(@Body loginServiceModel: LoginServiceModel): Response<UserInfo>
+    suspend fun login(@Body loginServiceModel: LoginServiceModel): Response<CommonResp<UserInfo>>
 }

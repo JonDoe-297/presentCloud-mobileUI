@@ -1,13 +1,12 @@
 package com.octopus.sample.ui.main.profile
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import com.bumptech.glide.request.RequestOptions
-import com.qingmei2.architecture.core.base.view.fragment.BaseFragment
-import com.qingmei2.architecture.core.ext.observe
-import com.qingmei2.architecture.core.image.GlideApp
 import com.octopus.sample.R
 import com.octopus.sample.utils.toast
+import com.qingmei2.architecture.core.base.view.fragment.BaseFragment
+import com.qingmei2.architecture.core.ext.observe
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
@@ -19,7 +18,7 @@ class ProfileFragment : BaseFragment() {
         import(profileKodeinModule)
     }
 
-    private val mViewModel: ProfileViewModel by instance()
+    private val mViewModel by instance<ProfileViewModel>()
 
     override val layoutId: Int = R.layout.fragment_profile
 
@@ -34,20 +33,14 @@ class ProfileFragment : BaseFragment() {
         mBtnEdit.setOnClickListener { toast { "coming soon..." } }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun onNewState(state: ProfileViewState) {
-        if (state.throwable != null) {
-            // handle throwable.
-        }
-
         if (state.userInfo != null) {
-            GlideApp.with(context!!)
-                    .load(state.userInfo.avatarUrl)
-                    .apply(RequestOptions().circleCrop())
-                    .into(mIvAvatar)
+            mTvNickname.text = "${state.userInfo.username}（${if (state.userInfo.roleList[0].roleName != "student") "老师" else "学生"}）"
+            mTvBio.text = state.userInfo.useraddress
 
-            mTvNickname.text = state.userInfo.name
-            mTvBio.text = state.userInfo.bio
-            mTvLocation.text = state.userInfo.location
+            mFabAdd.visibility = if (state.userInfo.roleList[0].roleName != "student") View.GONE
+            else View.VISIBLE
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.octopus.sample.ui.main
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -12,7 +11,6 @@ import com.qingmei2.architecture.core.base.view.fragment.BaseFragment
 import com.octopus.sample.R
 import com.octopus.sample.ui.main.home.HomeFragment
 import com.octopus.sample.ui.main.profile.ProfileFragment
-import com.octopus.sample.ui.main.repos.ReposFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -31,22 +29,14 @@ class MainFragment : BaseFragment() {
     override val layoutId: Int = R.layout.fragment_main
 
     @Suppress("unused")
-    private val mViewModel: MainViewModel by instance()     // not used
-
-    private var isPortMode: Boolean = true
+    private val mViewModel by instance<MainViewModel>()     // not used
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        isPortMode = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-
         viewPager.adapter = ViewPagerAdapter(childFragmentManager,
-                listOf(HomeFragment(), ReposFragment(), ProfileFragment()))
-        viewPager.offscreenPageLimit = 2
+                listOf(HomeFragment(), ProfileFragment()))
 
-        when (isPortMode) {
-            true -> bindsPortScreen()
-            false -> bindsLandScreen()
-        }
+        bindsPortScreen()
     }
 
     private fun bindsPortScreen() {
@@ -65,26 +55,11 @@ class MainFragment : BaseFragment() {
         }
     }
 
-    private fun bindsLandScreen() {
-        fabHome.setOnClickListener { onPageSelectChanged(0) }
-        fabRepo.setOnClickListener { onPageSelectChanged(1) }
-        fabProfile.setOnClickListener { onPageSelectChanged(2) }
-    }
-
     private fun onPageSelectChanged(index: Int) {
         // port-mode
-        if (isPortMode) {
-            for (position in 0..index) {
-                if (navigation.visibility == View.VISIBLE)
-                    navigation.menu.getItem(position).isChecked = index == position
-            }
-        } else {
-            // land-mode
-            if (viewPager.currentItem != index) {
-                viewPager.currentItem = index
-                if (fabMenu != null && fabMenu.isExpanded)
-                    fabMenu.toggle()
-            }
+        for (position in 0..index) {
+            if (navigation.visibility == View.VISIBLE)
+                navigation.menu.getItem(position).isChecked = index == position
         }
     }
 
@@ -94,11 +69,8 @@ class MainFragment : BaseFragment() {
             R.id.nav_home -> {
                 viewPager.currentItem = 0
             }
-            R.id.nav_repos -> {
-                viewPager.currentItem = 1
-            }
             R.id.nav_profile -> {
-                viewPager.currentItem = 2
+                viewPager.currentItem = 1
             }
         }
     }
