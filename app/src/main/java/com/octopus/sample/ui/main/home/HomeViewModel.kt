@@ -28,14 +28,22 @@ class HomeViewModel(
 
     val viewStateLiveData: LiveData<HomeViewState> = _viewStateLiveData
 
+    init {
+        viewModelScope.launch {
+            repository.clearData()
+        }
+    }
+
     private val mBoundaryCallback = HomeBoundaryCallback { result, pageIndex ->
         viewModelScope.launch {
             // Paging 预加载分页的结果，不需要对Error或者Refresh进行展示
             // 这会给用户一种无限加载列表的效果
             when (result) {
-                is Results.Success -> when (pageIndex == 1) {
-                    true -> repository.clearAndInsertNewData(result.data.data)
-                    false -> repository.insertNewPageData(result.data.data)
+                is Results.Success -> if (!result.data.data.isNullOrEmpty()) {
+                    when (pageIndex == 1) {
+                        true -> repository.clearAndInsertNewData(result.data.data)
+                        false -> repository.insertNewPageData(result.data.data)
+                    }
                 }
                 else -> Unit    // do nothing
             }
@@ -54,7 +62,9 @@ class HomeViewModel(
             when (val result = repository.fetchEventByPage()) {
                 // 2.1 成功后，对数据库进行清空，并插入第一页的数据，取消刷新
                 is Results.Success -> {
-                    repository.clearAndInsertNewData(result.data.data)
+                    if (!result.data.data.isNullOrEmpty()) {
+                        repository.clearAndInsertNewData(result.data.data)
+                    }
                     _viewStateLiveData.postNext { last ->
                         last.copy(isLoading = false, throwable = null)
                     }

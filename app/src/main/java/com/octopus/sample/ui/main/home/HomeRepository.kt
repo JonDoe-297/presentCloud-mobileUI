@@ -10,6 +10,7 @@ import com.octopus.sample.db.UserDatabase
 import com.octopus.sample.entity.CommonResp
 import com.octopus.sample.entity.ReceivedEvent
 import com.octopus.sample.http.service.ServiceManager
+import com.octopus.sample.manager.UserManager
 import com.octopus.sample.repository.UserInfoRepository
 import com.octopus.sample.utils.processApiResponse
 import com.qingmei2.architecture.core.base.repository.BaseRepositoryBoth
@@ -33,6 +34,11 @@ class HomeRepository(
     }
 
     @AnyThread
+    suspend fun clearData() {
+        localDataSource.clearOldData()
+    }
+
+    @AnyThread
     suspend fun insertNewPageData(items: List<ReceivedEvent>) {
         localDataSource.insertNewPagedEventData(items)
     }
@@ -49,7 +55,9 @@ class HomeRemoteDataSource(
 ) : IRemoteDataSource {
 
     suspend fun fetchEventsByPage(): Results<CommonResp<List<ReceivedEvent>>> {
-        val eventsResponse = serviceManager.userService.getClassList(userInfoRepository.accessId)
+        val eventsResponse =
+                if (UserManager.INSTANCE.roleList[0].roleName != "student") serviceManager.userService.getClassList(userInfoRepository.accessId)
+                else serviceManager.userService.getJoinedClasses(userInfoRepository.accessId)
         return processApiResponse(eventsResponse)
     }
 }

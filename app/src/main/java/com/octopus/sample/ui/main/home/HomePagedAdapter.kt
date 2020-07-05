@@ -1,5 +1,6 @@
 package com.octopus.sample.ui.main.home
 
+import android.content.Intent
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -21,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.qingmei2.architecture.core.image.GlideApp
 import com.octopus.sample.R
 import com.octopus.sample.entity.ReceivedEvent
+import com.octopus.sample.ui.detail.DetailActivity
 import com.octopus.sample.utils.TimeConverter
 
 class HomePagedAdapter : PagedListAdapter<ReceivedEvent, HomePagedViewHolder>(diffCallback) {
@@ -57,7 +59,7 @@ class HomePagedAdapter : PagedListAdapter<ReceivedEvent, HomePagedViewHolder>(di
     }
 }
 
-class HomePagedViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class HomePagedViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
     private val tvEventContent: TextView = view.findViewById(R.id.tvEventContent)
     private val tvEventTime: TextView = view.findViewById(R.id.tvEventTime)
@@ -66,5 +68,9 @@ class HomePagedViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         tvEventContent.text = data.classname
 
+        view.setOnClickListener {
+            view.context.startActivity(Intent(view.context, DetailActivity::class.java)
+                    .putExtra(DetailActivity.CLASS_NUM, data.classnum))
+        }
     }
 }

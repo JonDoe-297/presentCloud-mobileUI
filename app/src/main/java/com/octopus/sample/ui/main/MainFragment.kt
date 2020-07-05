@@ -6,11 +6,11 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
-import com.qingmei2.architecture.core.adapter.ViewPagerAdapter
-import com.qingmei2.architecture.core.base.view.fragment.BaseFragment
 import com.octopus.sample.R
 import com.octopus.sample.ui.main.home.HomeFragment
 import com.octopus.sample.ui.main.profile.ProfileFragment
+import com.qingmei2.architecture.core.adapter.ViewPagerAdapter
+import com.qingmei2.architecture.core.base.view.fragment.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind

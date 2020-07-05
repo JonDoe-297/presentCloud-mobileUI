@@ -54,6 +54,8 @@ dependencies {
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
+    implementation 'com.contrarywind:Android-PickerView:3.2.7'
+
     debugImplementation Dependencies.leakCanaryDebug
     debugImplementation Dependencies.leakCanaryDebugSupport
     releaseImplementation Dependencies.leakCanaryRelease

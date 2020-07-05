@@ -2,6 +2,8 @@ package com.octopus.sample.utils
 
 import com.qingmei2.architecture.core.logger.loge
 import com.octopus.sample.base.Results
+import com.octopus.sample.entity.CommonResp
+import com.octopus.sample.entity.ReceivedEvent
 import com.octopus.sample.http.Errors
 import retrofit2.Response
 import java.io.IOException

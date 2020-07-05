@@ -19,11 +19,10 @@ val profileKodeinModule = Kodein.Module(PROFILE_MODULE_TAG) {
         )
     }
 
-    bind<ProfileRemoteDataSource>() with singleton {
-        ProfileRemoteDataSource(instance())
-    }
-
     bind<ProfileRepository>() with singleton {
-        ProfileRepository(instance())
+        ProfileRepository(
+                remoteDataSource = ProfileRemoteDataSource(instance()),
+                localDataSource = LocalDataSource(instance())
+        )
     }
 }

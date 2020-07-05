@@ -18,7 +18,7 @@ class ProfileViewModel(
         getInfo()
     }
 
-    fun getInfo() {
+   private fun getInfo() {
         viewModelScope.launch {
             when (val result = repo.getInfo()) {
                 is Results.Failure -> _viewStateLiveData.postNext {
@@ -29,6 +29,10 @@ class ProfileViewModel(
                 }
             }
         }
+    }
+
+    fun clearPrefsUser() {
+        repo.clearPrefsUser()
     }
 
     companion object {

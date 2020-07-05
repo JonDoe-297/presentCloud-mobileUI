@@ -78,6 +78,21 @@
         app:layout_constraintTop_toBottomOf="@+id/mTvNickname"
         tools:text="In programming we trust." />
 
+    <Button
+        android:id="@+id/mBtnSignOut"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="32dp"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@drawable/selector_login_signin_button"
+        android:text="退出登录"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/mTvBio" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/mFabAdd"
         android:layout_width="wrap_content"
@@ -86,7 +101,6 @@
         android:layout_marginEnd="36dp"
         android:layout_marginBottom="36dp"
         android:src="@drawable/ic_add"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

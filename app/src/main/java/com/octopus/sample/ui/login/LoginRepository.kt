@@ -77,7 +77,7 @@ class LoginLocalDataSource(
     }
 
     fun saveUserId(userId: String) {
-        userRepository.accessId = "4"
+        userRepository.accessId = userId
     }
 }
 

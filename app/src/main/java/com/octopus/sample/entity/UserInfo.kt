@@ -15,6 +15,8 @@ data class UserInfo(
         val userid: String,
         @SerializedName("username")
         val username: String,
+        @SerializedName("name")
+        val name: String,
         @SerializedName("usernation")
         val usernation: String,
         @SerializedName("usernickname")

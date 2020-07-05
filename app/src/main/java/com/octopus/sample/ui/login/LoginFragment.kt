@@ -1,9 +1,13 @@
 package com.octopus.sample.ui.login
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.octopus.sample.R
 import com.octopus.sample.ui.MainActivity
 import com.octopus.sample.ui.register.RegisterActivity
@@ -13,6 +17,7 @@ import com.qingmei2.architecture.core.ext.observe
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
+
 
 class LoginFragment : BaseFragment() {
 
@@ -61,6 +66,17 @@ class LoginFragment : BaseFragment() {
 
         if (state.loginInfo != null) {
             MainActivity.launch(activity!!)
+        }
+
+        requestPermission()
+    }
+
+    private fun requestPermission() {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(context!!,
+                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    111)
         }
     }
 }
